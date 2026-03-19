@@ -42,3 +42,14 @@ Ez egy egyszerű, modern Wear OS alkalmazás, amely a legújabb **Jetpack Compos
 
 ---
 Készült tanulási célból, a legújabb Android Wear fejlesztési irányelvek alapján.
+
+
+<img width="1920" height="1020" alt="Img-1" src="https://github.com/user-attachments/assets/9394f7e1-4105-4a24-90d2-327f06776d61" />
+
+<img width="1920" height="1020" alt="Img-2" src="https://github.com/user-attachments/assets/0820ca62-f04a-40a5-b59b-7b3cc7ea8ce0" />
+
+<img width="1920" height="1020" alt="Img-3" src="https://github.com/user-attachments/assets/766aaf85-d946-4f77-a1a3-0ce714c44762" />
+
+
+
+
