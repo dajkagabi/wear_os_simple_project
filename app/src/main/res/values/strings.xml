@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">wear_os_simple_project</string>
+    <string name="hello_world">Hello, %1$s!</string>
+</resources>
