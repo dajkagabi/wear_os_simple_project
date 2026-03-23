@@ -37,4 +37,10 @@ A projekt folyamatosan bővült a következő modern Wear OS funkciókkal:
 4.  Futtasd az `app` modult.
 
 ---
+
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/7239f115-37ca-4f19-a77f-c68c87ba926a" />
+
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/bae88a32-4b4c-47c9-9bde-76dff11d6fc9" />
+
+
 Készült tanulási célból, a legújabb Android Wear fejlesztési irányelvek alapján.
