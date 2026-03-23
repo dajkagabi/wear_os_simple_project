@@ -21,10 +21,6 @@ Ez egy egyszerű, modern Wear OS alkalmazás, amely a legújabb **Jetpack Compos
 ## Telepítés és futtatás
 
 1.  Klónozd a projektet vagy töltsd le a forráskódot.
-2.  Nyisd meg a projektet **Android Studio**-ban (Ladybug vagy újabb verzió ajánlott).
-3.  Várd meg, amíg a Gradle szinkronizáció befejeződik.
-4.  Indíts el egy **Wear OS emulátort** (API 30+) vagy csatlakoztass egy fizikai Wear OS órát.
-5.  Futtasd az `app` modult.
 
 ## Használat
 
