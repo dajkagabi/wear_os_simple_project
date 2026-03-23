@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.core.splashscreen)
     implementation(libs.compose.icons.core)
     
+    // Navigáció a Wear OS-hez
+    implementation("androidx.wear.compose:compose-navigation:1.5.6")
+    
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
