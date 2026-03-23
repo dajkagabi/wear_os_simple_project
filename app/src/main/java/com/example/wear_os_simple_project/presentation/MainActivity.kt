@@ -59,8 +59,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // A saját témánkat használjuk
+            // A saját témánkat használjuk, amiben a központi színeket tároljuk
             Wear_os_simple_projectTheme {
+                // Elindítjuk a fő alkalmazás-komponenst
                 CsupaszWearApp()
             }
         }
@@ -69,14 +70,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CsupaszWearApp() {
+    // Navigációs vezérlő: ez jegyzi meg, épp melyik oldalon vagyunk
     val navController = rememberSwipeDismissableNavController()
+    
+    // A számláló állapotát itt tároljuk a legfelső szinten, hogy ne vesszen el váltáskor
     var szamlalo by remember { mutableIntStateOf(0) }
 
+    // AppScaffold: Az alkalmazás legkülső kerete
     AppScaffold {
+        // SwipeDismissableNavHost: Ez kezeli az oldalak közötti váltást és az elhúzós visszalépést
         SwipeDismissableNavHost(
             navController = navController,
             startDestination = SCREEN_FO
         ) {
+            // 1. Főképernyő beállítása
             composable(SCREEN_FO) {
                 FoKepernyo(
                     szamlalo = szamlalo,
@@ -85,9 +92,11 @@ fun CsupaszWearApp() {
                     onNavigalasMasodik = { navController.navigate(SCREEN_MASODIK) }
                 )
             }
+            // 2. Második képernyő (Információ) beállítása
             composable(SCREEN_MASODIK) {
                 MasodikKepernyo(onVissza = { navController.popBackStack() })
             }
+            // 3. Lista képernyő beállítása
             composable(SCREEN_LISTA) {
                 ListaKepernyo(onVissza = { navController.popBackStack() })
             }
@@ -102,19 +111,22 @@ fun FoKepernyo(
     onNavigalasLista: () -> Unit,
     onNavigalasMasodik: () -> Unit
 ) {
+    // Haptic: Rezgés visszajelzés gombnyomáskor
     val haptic = LocalHapticFeedback.current
     
-    // CSAK A SZÁMOLÓ GOMB SZÍNEI: Mentazöld és Korall, közvetlenül a Color.kt-ből
+    // A gomb színe: páros kattintásnál Mentazöld, páratlannál Korall (a Color.kt-ből)
     val gombSzin = if (szamlalo % 2 == 0) SzamoloGombSzin1 else SzamoloGombSzin2
 
+    // ScreenScaffold: Megjeleníti a pontos időt (TimeText) a képernyő tetején
     ScreenScaffold(timeText = { TimeText() }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+                .background(MaterialTheme.colorScheme.background), // Központi háttérszín használata
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Kattintásszámláló felirata
             Text(
                 text = "Kattintások: $szamlalo", 
                 style = MaterialTheme.typography.labelMedium,
@@ -123,7 +135,7 @@ fun FoKepernyo(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Ez a gomb Mentazöld és Korall között váltakozik
+            // Számláló gomb - Mentazöld és Korall között váltakozik
             Button(
                 onClick = {
                     Log.d(TAG, "Számolj gomb megnyomva")
@@ -140,7 +152,7 @@ fun FoKepernyo(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Ez a gomb megmarad a téma szerinti Lila színűnek
+            // Lista gomb - Ez megmarad a téma szerinti Lila színűnek
             Button(
                 onClick = onNavigalasLista,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -153,6 +165,7 @@ fun FoKepernyo(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Infó gomb
             Button(
                 onClick = onNavigalasMasodik,
                 modifier = Modifier.fillMaxWidth(0.7f),
@@ -168,9 +181,11 @@ fun FoKepernyo(
 
 @Composable
 fun ListaKepernyo(onVissza: () -> Unit) {
+    // ListState: Jegyezi a lista görgetési pozícióját (hol tartunk a listában)
     val listState = rememberScalingLazyListState()
     
     ScreenScaffold(timeText = { TimeText() }) {
+        // ScalingLazyColumn: Speciális Wear OS lista, ami a széleken behúzza az elemeket
         ScalingLazyColumn(
             state = listState,
             modifier = Modifier
@@ -179,6 +194,7 @@ fun ListaKepernyo(onVissza: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Lista fejléc eleme
             item {
                 Text(
                     "Görgethető lista", 
@@ -188,19 +204,21 @@ fun ListaKepernyo(onVissza: () -> Unit) {
                 )
             }
 
+            // 10 darab gomb legenerálása a listába
             items(10) { index ->
                 Button(
                     onClick = { Log.d(TAG, "Elem $index kiválasztva") },
                     modifier = Modifier.fillMaxWidth(0.9f).padding(vertical = 2.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer, 
-                        contentColor = MaterialTheme.colorScheme.onSurface
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer, // Fehér gomb
+                        contentColor = MaterialTheme.colorScheme.onSurface // Fekete betű
                     )
                 ) {
                     Text("Elem #$index")
                 }
             }
 
+            // Vissza gomb a lista legalján
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
@@ -219,9 +237,11 @@ fun ListaKepernyo(onVissza: () -> Unit) {
 
 @Composable
 fun MasodikKepernyo(onVissza: () -> Unit) {
+    // Barack szín definiálása (ezt is ki lehetne tenni a Color.kt-be)
     val barackSzin = Color(0xFFFFDAB9)
 
     ScreenScaffold(timeText = { TimeText() }) {
+        // Box: segít a tartalom pontos középre helyezésében
         Box(
             modifier = Modifier.fillMaxSize().background(barackSzin),
             contentAlignment = Alignment.Center
@@ -236,6 +256,7 @@ fun MasodikKepernyo(onVissza: () -> Unit) {
                 Text("Ez a második oldal.", color = Color.Black, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(20.dp))
                 
+                // Vissza gomb a téma szerinti fehér/fekete színekkel
                 Button(
                     onClick = onVissza,
                     colors = ButtonDefaults.buttonColors(
