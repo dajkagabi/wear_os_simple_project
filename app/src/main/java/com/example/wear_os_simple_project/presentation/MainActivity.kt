@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,8 +43,11 @@ import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import com.example.wear_os_simple_project.presentation.theme.SzamoloGombSzin1
+import com.example.wear_os_simple_project.presentation.theme.SzamoloGombSzin2
+import com.example.wear_os_simple_project.presentation.theme.Wear_os_simple_projectTheme
 
-// Naplózáshoz használt  így könnyebb keresni a Logcat-ben
+// Naplózáshoz használt név (TAG), így könnyebb keresni a Logcat-ben
 private const val TAG = "WearApp"
 
 // A három különböző képernyő belső neve (útvonala) a navigációhoz
@@ -56,45 +59,37 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Elindítjuk a fő alkalmazás-komponenst
-            CsupaszWearApp()
+            // A saját témánkat használjuk
+            Wear_os_simple_projectTheme {
+                CsupaszWearApp()
+            }
         }
     }
 }
 
 @Composable
 fun CsupaszWearApp() {
-    // Navigációs vezérlő: ez jegyzi meg, épp melyik oldalon vagyunk
     val navController = rememberSwipeDismissableNavController()
-    
-    // A számláló állapotát itt tároljuk, hogy navigáció közben is megmaradjon az értéke
     var szamlalo by remember { mutableIntStateOf(0) }
 
-    MaterialTheme {
-        // AppScaffold: Az alkalmazás legkülső kerete
-        AppScaffold {
-            // SwipeDismissableNavHost: Ez kezeli az oldalak közötti váltást és az elhúzós visszalépést
-            SwipeDismissableNavHost(
-                navController = navController,
-                startDestination = SCREEN_FO
-            ) {
-                // 1. Főképernyő beállítása
-                composable(SCREEN_FO) {
-                    FoKepernyo(
-                        szamlalo = szamlalo,
-                        onKattintas = { szamlalo++ },
-                        onNavigalasLista = { navController.navigate(SCREEN_LISTA) },
-                        onNavigalasMasodik = { navController.navigate(SCREEN_MASODIK) }
-                    )
-                }
-                // 2. Második képernyő (Információ) beállítása
-                composable(SCREEN_MASODIK) {
-                    MasodikKepernyo(onVissza = { navController.popBackStack() })
-                }
-                // 3. Lista képernyő beállítása
-                composable(SCREEN_LISTA) {
-                    ListaKepernyo(onVissza = { navController.popBackStack() })
-                }
+    AppScaffold {
+        SwipeDismissableNavHost(
+            navController = navController,
+            startDestination = SCREEN_FO
+        ) {
+            composable(SCREEN_FO) {
+                FoKepernyo(
+                    szamlalo = szamlalo,
+                    onKattintas = { szamlalo++ },
+                    onNavigalasLista = { navController.navigate(SCREEN_LISTA) },
+                    onNavigalasMasodik = { navController.navigate(SCREEN_MASODIK) }
+                )
+            }
+            composable(SCREEN_MASODIK) {
+                MasodikKepernyo(onVissza = { navController.popBackStack() })
+            }
+            composable(SCREEN_LISTA) {
+                ListaKepernyo(onVissza = { navController.popBackStack() })
             }
         }
     }
@@ -107,32 +102,28 @@ fun FoKepernyo(
     onNavigalasLista: () -> Unit,
     onNavigalasMasodik: () -> Unit
 ) {
-    // Haptic: Rezgés visszajelzés gombnyomáskor
     val haptic = LocalHapticFeedback.current
     
-    // A gomb színe változik: kék ha páros, lila ha páratlan a számláló
-    val gombSzin = if (szamlalo % 2 == 0) Color(0xFF2196F3) else MaterialTheme.colorScheme.tertiary
-    val halvanySzurke = Color(0xFFF5F5F5)
+    // CSAK A SZÁMOLÓ GOMB SZÍNEI: Mentazöld és Korall, közvetlenül a Color.kt-ből
+    val gombSzin = if (szamlalo % 2 == 0) SzamoloGombSzin1 else SzamoloGombSzin2
 
-    // ScreenScaffold: Megjeleníti az órát (TimeText) a képernyő tetején
     ScreenScaffold(timeText = { TimeText() }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(halvanySzurke),
+                .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Kattintásszámláló felirata
             Text(
                 text = "Kattintások: $szamlalo", 
                 style = MaterialTheme.typography.labelMedium,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Számláló gomb ikonnal
+            // Ez a gomb Mentazöld és Korall között váltakozik
             Button(
                 onClick = {
                     Log.d(TAG, "Számolj gomb megnyomva")
@@ -149,19 +140,19 @@ fun FoKepernyo(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Gomb, ami a lista oldalra visz
+            // Ez a gomb megmarad a téma szerinti Lila színűnek
             Button(
                 onClick = onNavigalasLista,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier.fillMaxWidth(0.7f)
             ) {
-                Icon(Icons.Filled.List, null)
+                Icon(Icons.AutoMirrored.Filled.List, null)
                 Spacer(Modifier.width(8.dp))
                 Text("Lista")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Gomb az információ oldalhoz
             Button(
                 onClick = onNavigalasMasodik,
                 modifier = Modifier.fillMaxWidth(0.7f),
@@ -177,45 +168,39 @@ fun FoKepernyo(
 
 @Composable
 fun ListaKepernyo(onVissza: () -> Unit) {
-    // ListState: Jegyezi a lista görgetési pozícióját
     val listState = rememberScalingLazyListState()
-    val vilagosSzurke = Color(0xFFF5F5F5)
     
     ScreenScaffold(timeText = { TimeText() }) {
-        // ScalingLazyColumn: Speciális Wear OS lista, ami behúzza az elemeket a széleken
         ScalingLazyColumn(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .background(vilagosSzurke),
+                .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Lista címe
             item {
                 Text(
                     "Görgethető lista", 
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
 
-            // Generálunk 10 gombot a listába
             items(10) { index ->
                 Button(
                     onClick = { Log.d(TAG, "Elem $index kiválasztva") },
                     modifier = Modifier.fillMaxWidth(0.9f).padding(vertical = 2.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White, 
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer, 
+                        contentColor = MaterialTheme.colorScheme.onSurface
                     )
                 ) {
                     Text("Elem #$index")
                 }
             }
 
-            // Vissza gomb a lista végén
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
@@ -237,7 +222,6 @@ fun MasodikKepernyo(onVissza: () -> Unit) {
     val barackSzin = Color(0xFFFFDAB9)
 
     ScreenScaffold(timeText = { TimeText() }) {
-        // Box a tartalom középre igazításához
         Box(
             modifier = Modifier.fillMaxSize().background(barackSzin),
             contentAlignment = Alignment.Center
@@ -252,10 +236,12 @@ fun MasodikKepernyo(onVissza: () -> Unit) {
                 Text("Ez a második oldal.", color = Color.Black, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(20.dp))
                 
-                // Vissza gomb fehér háttérrel
                 Button(
                     onClick = onVissza,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer, 
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ),
                     modifier = Modifier.fillMaxWidth(0.7f)
                 ) {
                     Text("Vissza", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)

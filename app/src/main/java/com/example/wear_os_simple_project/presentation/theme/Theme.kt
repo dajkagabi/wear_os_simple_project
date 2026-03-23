@@ -7,11 +7,9 @@ import androidx.wear.compose.material3.MaterialTheme
 fun Wear_os_simple_projectTheme(
     content: @Composable () -> Unit
 ) {
-    /**
-     * Empty theme to customize for your app.
-     * See: https://developer.android.com/jetpack/compose/designsystems/custom
-     */
+    // Itt állítjuk be a központi színpalettát (wearColorScheme)
     MaterialTheme(
+        colorScheme = wearColorScheme,
         content = content
     )
 }
